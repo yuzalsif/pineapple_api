@@ -25,7 +25,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ShopProduct)
 class ShopProductAdmin(admin.ModelAdmin):
-    list_display = ['product', 'inventory', 'product_collection', 'delivery_cost', 'shop']
+    list_display = ['product', 'inventory', 'product_collection', 'delivery_cost',]
     list_per_page = number_of_items_per_page
 
 @admin.register(Order)
