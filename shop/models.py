@@ -65,6 +65,9 @@ class Customer(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=50)
 
+    def __str__(self) -> str:
+        return self.first_name
+
 class Order(models.Model):
     PAYMENT_COMPLETE = 'C'
     PAYMENT_PENDING = 'P'
@@ -78,7 +81,7 @@ class Order(models.Model):
 
     placed_at = models.DateTimeField(auto_now_add=True)
     payment_status = models.CharField(max_length=1, choices=PAYMENT_STATUS)
-    custumor = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 
 class OrderItem(models.Model):
