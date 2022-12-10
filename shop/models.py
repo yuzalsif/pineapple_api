@@ -59,6 +59,9 @@ class ShopProduct(models.Model):
     delivery_cost = models.DecimalField(decimal_places=2, max_digits=4, default=0.00)
     shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.product.__str__()
+
 class Customer(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
