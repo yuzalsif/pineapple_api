@@ -25,7 +25,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(ShopProduct)
 class ShopProductAdmin(admin.ModelAdmin):
-    list_display = ['product', 'inventory', 'product_collection', 'delivery_cost',]
+    list_display = ['product', 'inventory', 'product_collection', 'delivery_cost', ]
     list_per_page = number_of_items_per_page
 
 @admin.register(Order)
@@ -46,4 +46,9 @@ class CartAdmin(admin.ModelAdmin):
 @admin.register(CartItem)
 class CartItemAdmin(admin.ModelAdmin):
     list_display = ['quantity', 'product']
+    list_per_page = number_of_items_per_page
+
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ['first_name', 'last_name', 'email', 'phone']
     list_per_page = number_of_items_per_page
