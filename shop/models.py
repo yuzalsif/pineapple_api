@@ -57,15 +57,14 @@ class ShopProduct(models.Model):
     inventory = models.IntegerField()
     product_collection = models.ForeignKey(ShopCollection, on_delete=models.CASCADE)
     delivery_cost = models.DecimalField(decimal_places=2, max_digits=4, default=0.00)
-    # shop = models.ForeignKey(Shop, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.product.__str__()
 
 class Customer(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(unique=True, blank=True, null=True)
     phone = models.CharField(max_length=50)
 
     def __str__(self) -> str:
