@@ -46,13 +46,8 @@ class OrderItemAdmin(admin.ModelAdmin):
 class CartAdmin(admin.ModelAdmin):
     list_display = ['placed_at', 'customer', 'show_cart_items_of_this_cart',]
     list_per_page = number_of_items_per_page
-    search_fields = ['customer_phone']
+    search_fields = ['customer_phone_number']
     list_select_related = ['customer']
-
-
-    def customer_phone_number(self, cart):
-        phone = cart.customer.phone
-        return phone
 
     @admin.display(description='Cart Items')
     def show_cart_items_of_this_cart(self, cart):
@@ -66,7 +61,7 @@ class CartAdmin(admin.ModelAdmin):
     def get_queryset(self, request) :
         return super().get_queryset(request).annotate(
             cart_items_count = Count('cartitem'),
-            customer_phone = F('customer__phone')
+            customer_phone_number = F('customer__phone')
         )
 
 @admin.register(CartItem)
@@ -76,5 +71,37 @@ class CartItemAdmin(admin.ModelAdmin):
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'email', 'phone']
+    list_display = ['first_name', 'last_name', 'email', 'phone', 'show_customer_carts', 'show_customer_orders']
     list_per_page = number_of_items_per_page
+
+    @admin.display(description='Carts')
+    def show_customer_carts(self, customer):
+        url = (
+            reverse('admin:shop_cart_changelist')
+            + '?' +
+            urlencode({
+                'customer_id': str(customer.pk)
+            })
+            )
+
+        return format_html("<a href='{}'>{}</a>", url, customer.carts_count)
+
+    @admin.display(description='Orders')
+    def show_customer_orders(self, customer):
+        url = (
+            reverse('admin:shop_order_changelist')
+            + '?' +
+            urlencode(
+                {
+                    'customer_id': str(customer.pk)
+                }
+            )
+            )
+
+        return format_html("<a href='{}'>{}<a>", url, customer.order_count)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            carts_count = Count('cart'),
+            order_count = Count('order')
+        )
