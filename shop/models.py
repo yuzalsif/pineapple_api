@@ -68,7 +68,7 @@ class Customer(models.Model):
     phone = models.CharField(max_length=50)
 
     def __str__(self) -> str:
-        return self.first_name
+        return self.first_name + ' ' + '[{}]'.format(self.phone)
 
 class Order(models.Model):
     PAYMENT_COMPLETE = 'C'
