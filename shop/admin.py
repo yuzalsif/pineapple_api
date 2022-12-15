@@ -21,6 +21,9 @@ class CollectionAdmin(admin.ModelAdmin):
 class ShopCollectionAdmin(admin.ModelAdmin):
     list_display = ['collection', 'shop']
     list_per_page = number_of_items_per_page
+    search_fields = ['shop']
+
+    
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
@@ -34,8 +37,30 @@ class ShopProductAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['placed_at', 'payment_status', 'customer', 'shop']
+    list_display = ['placed_at', 'payment_status', 'customer','show_order_items', 'shop']
     list_per_page = number_of_items_per_page
+    list_select_related = ['customer']
+    search_fields = ['customer_phone_number']
+
+    @admin.display(description='Order Items')
+    def show_order_items(self, order):
+        url = (
+            reverse('admin:shop_orderitem_changelist')
+            + '?' +
+            urlencode({
+                'order__id': str(order.pk)
+            })
+            )
+
+        return format_html("<a href='{}'>{}</a>", url, order.order_items_count)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            customer_phone_number = F('customer__phone'),
+            order_items_count = Count('orderitem')
+        )
+
+    
 
 @admin.register(OrderItem)
 class OrderItemAdmin(admin.ModelAdmin):
