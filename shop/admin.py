@@ -10,8 +10,25 @@ from .models import *
 number_of_items_per_page: int = 15
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ['name', 'address']
+    list_display = ['name', 'address', 'show_shop_collections']
     list_per_page = number_of_items_per_page
+
+    @admin.display(description='Collections')
+    def show_shop_collections(self, shop):
+        url = (
+            reverse('admin:shop_shopcollection_changelist')
+            + '?' +
+            urlencode({
+                'shop__id': str(shop.pk)
+            })
+            )
+
+        return format_html("<a href='{}'>{}</a>", url, shop.shop_collection_count)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            shop_collection_count = Count('shopcollection')
+        )
 
 @admin.register(Collection) 
 class CollectionAdmin(admin.ModelAdmin):
