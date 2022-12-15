@@ -19,11 +19,26 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(ShopCollection)
 class ShopCollectionAdmin(admin.ModelAdmin):
-    list_display = ['collection', 'shop']
+    list_display = ['collection','show_shop_products', 'shop']
     list_per_page = number_of_items_per_page
     search_fields = ['shop']
 
-    
+    @admin.display(description='Products')
+    def show_shop_products(self, shop_collection):
+        url = (
+            reverse('admin:shop_shopproduct_changelist')
+            + '?' +
+            urlencode({
+                'product_collection__id': str(shop_collection.pk)
+            })
+            )
+
+        return format_html("<a href='{}'>{}</a>", url, shop_collection.collection_product_count)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            collection_product_count = Count('shopproduct')
+        )
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
