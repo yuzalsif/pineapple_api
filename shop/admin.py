@@ -10,7 +10,7 @@ from .models import *
 number_of_items_per_page: int = 15
 @admin.register(Shop)
 class ShopAdmin(admin.ModelAdmin):
-    list_display = ['name', 'address', 'show_shop_collections']
+    list_display = ['name', 'address', 'show_shop_collections', 'show_shop_orders']
     list_per_page = number_of_items_per_page
 
     @admin.display(description='Collections')
@@ -25,9 +25,22 @@ class ShopAdmin(admin.ModelAdmin):
 
         return format_html("<a href='{}'>{}</a>", url, shop.shop_collection_count)
 
+    @admin.display(description='Orders')
+    def show_shop_orders(self, shop):
+        url = (
+            reverse('admin:shop_order_changelist')
+            + '?' +
+            urlencode({
+                'shop__id': str(shop.pk)
+            })
+            )
+
+        return format_html("<a href='{}'>{}</a>", url, shop.shop_order_count)
+
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
-            shop_collection_count = Count('shopcollection')
+            shop_collection_count = Count('shopcollection'),
+            shop_order_count = Count('order')
         )
 
 @admin.register(Collection) 
