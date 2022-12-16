@@ -65,9 +65,15 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(ShopProduct)
 class ShopProductAdmin(admin.ModelAdmin):
     list_display = ['product', 'inventory', 'product_collection', 'delivery_cost', 
-                    'product_unit_price', 'product_value_in_terms_of_cost']
+                    'show_shop_of_shop_product','product_unit_price', 
+                    'product_value_in_terms_of_cost']
     list_per_page = number_of_items_per_page
-    list_select_related = ['product']
+    list_select_related = ['product', 'product_collection']
+
+
+    @admin.display(description='shop')
+    def show_shop_of_shop_product(self, shop_product: ShopProduct):
+        return shop_product.product_collection.shop
 
     @admin.display(description='Unit Price')
     def product_unit_price(self, shop_product: ShopProduct):
