@@ -1,18 +1,10 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework.generics import ListCreateAPIView
 
 from .models import *
 from .serializers import *
 
-@api_view()
-def get_all_shops(request):
+class ShopListCreate(ListCreateAPIView):
     queryset = Shop.objects.all()
-    serializer = ShopSerializer(queryset, many=True)
-    return Response(serializer.data)
+    serializer_class = ShopSerializer
 
-@api_view()
-def get_shop_detail(request, id):
-    shop = get_object_or_404(Shop, pk=id)
-    serializer = ShopSerializer(shop)
-    return Response(serializer.data)
